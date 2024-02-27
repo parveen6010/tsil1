@@ -9,12 +9,15 @@ import "react-phone-input-2/lib/style.css";
 import { auth } from "./firebase.config";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { toast, Toaster } from "react-hot-toast";
+import loginanimation from "../Animations/Animation - 1709015744141.json"
+
 
 // import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 // import { CiMobile1 } from "react-icons/ci";
 // import { useState } from "react";
 // import { FaRegTimesCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import Lottie from "react-lottie";
 // import { Link } from "react-router-dom";
 
 // import admincardIcon from "./admitKard.svg";
@@ -31,10 +34,23 @@ const Login = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-   const dashboardgo = () => {
-      navigate("/dashboard");
-    };
-      
+   
+
+    function createOptions(animationData,speed=3) {
+      return {
+        loop: true,
+        autoplay: true, 
+        animationData: animationData,
+        rendererSettings: {
+          preserveAspectRatio: 'xMidYMid slice'
+        },
+        speed: speed,
+      };
+    }
+
+    const loginanimationOptions = createOptions(loginanimation,1);
+
+
   useEffect(() =>{
     localStorage.setItem("dataKey", JSON.stringify(ph));
   },[ph])
@@ -54,6 +70,15 @@ const Login = () => {
   
  console.log(phone);
 //  console.log("ff");
+
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, 8000);
+}, [user]);
 
 
   function onCaptchVerify() {
@@ -124,26 +149,25 @@ const Login = () => {
        <h2 className="text-3xl font-bold text-green-500 mb-4">Login</h2>
    <div className="border-2 w-10 border-green-500 inline-block mb-5"></div>
     <section className=" lg:bg-black lg:bg-opacity-10 flex items-center justify-center h-[45%]  ">
-      <div className="" >
+      <div className="w-80 flex flex-col gap-2 rounded-lg p-4 mr-2" >
         <Toaster toastOptions={{ duration: 4000 }} />
         <div id="recaptcha-container"></div>
         {user ?  (
           <>
-               <Link to={"/Dashboard"}>
-           <button
-             type="submit"
-            className=" logingetstart border-2 border-green-500 rounded-full px-4 h-10  inline-block font-semibold ml-4 text-green-500 hover:bg-green-500 hover:text-white"
-           >
-             Go to Dashboard
-           </button>
-         </Link>         
+          <Lottie
+        options={loginanimationOptions}
+        height={200}
+        width={200}
+    
+      />
           </>
           
         ) : (
-          <div className="w-80 flex flex-col gap-2 rounded-lg p-4  ">
-            {showOTP ? (
+          <>
+          {showOTP ? (
             <>
-           <label
+           
+<label
            htmlFor="otp"
            className="font-small text-1xl text-black text-center"
          >
@@ -180,45 +204,61 @@ const Login = () => {
               onClick={onOTPVerify}
               className=" logingetstart border-2 border-green-500 rounded-full px-4 h-8 inline-block font-semibold ml-4 text-green-500 hover:bg-green-500 hover:text-white"
                >
-              <span>Verify</span>
+               {loading ? ( 
+    <CgSpinner size={20} className="mt-1 animate-spin" />
+  ) : (
+    <span>Verify</span>
+  )}
+
             </button>
-            </div> 
+            </div>
 
           </>
           
             ) : (
               <>
-           
+
+
                 <PhoneInput country={"in"} value={ph} onChange={setPh} className="" /> 
-               
-             
                 <button
                   onClick={onSignup}
                 
                   className=" logingetstart border-2 border-green-500 rounded-full px-4 h-8 inline-block font-semibold ml-4 text-green-500 hover:bg-green-500 hover:text-white"
 
                 >
-                  {loading && (
-                    <CgSpinner size={20} className="mt-1 animate-spin" />
-                  )}
-                  <span>Get OTP</span>
+
+         {loading ? ( 
+    <CgSpinner size={20} className="mt-1 animate-spin" />
+  ) : (
+    <span>Get OTP</span>
+  )}
                 </button>
-                
-          
+     
            </>
             )}
-          </div>
+           </>
         )}
       </div>
     </section>
-   
-    
+      
 </div>
 
   );
 };
 
 export default Login;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
